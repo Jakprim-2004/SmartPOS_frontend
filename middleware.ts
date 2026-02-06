@@ -23,10 +23,13 @@ export function middleware(request: NextRequest) {
     const isProtectedPath = protectedPaths.some(path => pathname === path || pathname.startsWith(path + '/'));
 
     // 1. Redirect unauthenticated users to staff login
+    // Temporarily disabled mandatory redirect to handle cross-site cookie propagation issues
+    /*
     if (isProtectedPath && !token) {
         const loginUrl = new URL('/login', request.url);
         return NextResponse.redirect(loginUrl);
     }
+    */
 
     // 2. Redirect authenticated users away from login page to their dashboard
     if ((pathname === '/login' || pathname === '/') && token) {
