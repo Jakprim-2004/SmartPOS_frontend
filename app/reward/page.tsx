@@ -72,7 +72,7 @@ function RewardContent() {
             // Call API to redeem reward
             await redeemReward(redeemRewardItem.id!, selectedCustomer.id);
 
-            const pointsCost = redeemRewardItem.pointsCost || redeemRewardItem.points_cost || 0;
+            const pointsCost = redeemRewardItem.pointsCost || redeemRewardItem.pointsRequired || redeemRewardItem.points_required || 0;
 
             // Update local state
             const updatedCustomer = {

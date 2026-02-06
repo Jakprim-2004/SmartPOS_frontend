@@ -1,7 +1,7 @@
 "use client";
 
 import { X, Trash2, Plus, Minus, ShoppingBag } from "lucide-react";
-import { Product } from "@/components/product/types";
+import { Product } from "@/lib/types";
 
 export interface CartItem extends Product {
     quantity: number;
@@ -48,7 +48,7 @@ export default function CartDrawer({ isOpen, onClose, cartItems, onUpdateQuantit
                             <div className="w-20 h-20 bg-slate-100 rounded-lg overflow-hidden shrink-0">
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
                                 <img
-                                    src={item.mainImageUrl || "https://placehold.co/100x100?text=Product"}
+                                    src={item.imageUrl || "https://placehold.co/100x100?text=Product"}
                                     alt={item.name}
                                     className="w-full h-full object-cover"
                                 />

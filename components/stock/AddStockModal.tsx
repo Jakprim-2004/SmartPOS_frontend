@@ -2,7 +2,7 @@
 
 import { X, Save, PackagePlus } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
-import { Product } from "../product/types";
+import { Product } from "@/lib/types";
 import toast from "react-hot-toast";
 
 interface AddStockModalProps {

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import config from '../config';
-import Swal from 'sweetalert2';
+import toast from 'react-hot-toast';
 
 class TokenManager {
     isRefreshing: boolean;
@@ -219,14 +219,8 @@ class TokenManager {
 
         // Use standard window location for full reset
         if (typeof window !== 'undefined') {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Session Expired',
-                text: 'Please sign in again',
-                confirmButtonText: 'Sign In'
-            }).then(() => {
-                window.location.href = '/';
-            });
+            toast.error('Session Expired. Please sign in again.');
+            window.location.href = '/';
         }
     }
 }

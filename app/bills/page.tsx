@@ -30,6 +30,7 @@ export default function BillsPage() {
             // Map API response to BillSale type
             const bills: BillSale[] = data.map((sale: any) => ({
                 id: sale.id,
+                billNumber: sale.billNumber || sale.bill_number || `BILL-${sale.id}`,
                 payDate: sale.createdAt || sale.created_at, // Handle both cases
                 totalAmount: Number(sale.total),
                 paymentMethod: sale.paymentMethod || sale.payment_method,

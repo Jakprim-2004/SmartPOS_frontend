@@ -99,7 +99,7 @@ export default function CustomerDisplayPage() {
         const restoreSession = async () => {
             try {
                 const { getSales } = await import("@/lib/api/sales");
-                const hData = await getSales('held');
+                const hData = await getSales({ status: 'held' });
                 if (hData.data && hData.data.length > 0) {
                     const latest = hData.data[0];
                     setCart(latest.items.map((item: any) => ({

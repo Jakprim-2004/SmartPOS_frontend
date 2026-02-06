@@ -21,7 +21,7 @@ import CartDrawer, { CartItem } from "@/components/member/CartDrawer";
 import MemberSidebar from "@/components/member/MemberSidebar";
 import MobileNav from "@/components/member/MobileNav";
 import { showConfirm } from "@/utils/confirmToast";
-import { Product } from "@/components/product/types";
+import { Product } from "@/lib/types";
 import CustomerProfileModal from "@/components/member/CustomerProfileModal";
 import PurchaseDetailModal from "@/components/member/PurchaseDetailModal";
 import MemberHistory from "@/components/member/MemberHistory";
@@ -213,7 +213,7 @@ export default function MemberDashboardPage() {
                     // Map Shop Coupons (Available to all) - Only show unused ones
                     const mappedShopCoupons = shopCoupons
                         .filter((c: any) => c.isActive && !usedCouponCodes.has(c.code))
-                        .map(c => ({
+                        .map((c: any) => ({
                             id: `shop-${c.id}`,
                             code: c.code,
                             title: c.description || c.code,
@@ -229,7 +229,7 @@ export default function MemberDashboardPage() {
                     const usedCouponEntries = customerSales
                         .filter((s: any) => s.couponCode)
                         .map((s: any) => {
-                            const couponInfo = shopCoupons.find(c => c.code === s.couponCode);
+                            const couponInfo = shopCoupons.find((c: any) => c.code === s.couponCode);
                             return {
                                 id: `used-${s.id}`,
                                 code: s.couponCode,
@@ -244,7 +244,7 @@ export default function MemberDashboardPage() {
                         });
 
                     // Map Redemptions (Owned by customer)
-                    const mappedRedemptions = redemptions.map(r => ({
+                    const mappedRedemptions = redemptions.map((r: any) => ({
                         id: `redeem-${r.id}`,
                         code: `REWARD-${r.rewardId}`,
                         title: r.reward?.name || 'ของรางวัล',

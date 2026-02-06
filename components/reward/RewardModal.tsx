@@ -23,7 +23,10 @@ export default function RewardModal({ show, reward, onClose, onSave }: RewardMod
     useEffect(() => {
         if (show) {
             if (reward) {
-                setFormData(reward);
+                setFormData({
+                    ...reward,
+                    pointsCost: reward.pointsCost || reward.pointsRequired || reward.points_required || 0
+                });
             } else {
                 setFormData({
                     name: "",

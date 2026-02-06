@@ -15,7 +15,8 @@ interface RedeemModalProps {
 export default function RedeemModal({ show, reward, customer, onClose, onConfirm }: RedeemModalProps) {
     if (!show || !reward || !customer) return null;
 
-    const remainingPoints = customer.points - reward.pointsCost;
+    const pointsToDeduct = reward.pointsCost || reward.pointsRequired || reward.points_required || 0;
+    const remainingPoints = customer.points - pointsToDeduct;
 
     return (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
@@ -43,7 +44,7 @@ export default function RedeemModal({ show, reward, customer, onClose, onConfirm
                             </div>
                             <div className="flex justify-between items-center text-red-500 font-medium">
                                 <span>ใช้แต้มแลก</span>
-                                <span className="font-mono">-{reward.pointsCost.toLocaleString()}</span>
+                                <span className="font-mono">-{pointsToDeduct.toLocaleString()}</span>
                             </div>
                             <div className="border-t border-slate-200 my-2"></div>
                             <div className="flex justify-between items-center font-bold text-indigo-600 text-base">

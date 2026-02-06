@@ -1,7 +1,7 @@
 "use client";
 
 import { Search, Plus, Trash2, CheckSquare, Square, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
-import { Product } from "../product/types";
+import { Product } from "@/lib/types";
 import Image from "next/image";
 
 interface StockTableProps {
@@ -256,8 +256,8 @@ export default function StockTable({
                                     onClick={() => handlePageChange(page as number)}
                                     disabled={isLoading}
                                     className={`w-9 h-9 flex items-center justify-center rounded-xl font-bold text-sm transition-all ${currentPage === page
-                                            ? 'bg-gradient-to-br from-indigo-500 to-indigo-600 text-white shadow-lg shadow-indigo-200'
-                                            : 'border border-slate-200 bg-white text-slate-600 hover:border-indigo-200 hover:bg-indigo-50'
+                                        ? 'bg-gradient-to-br from-indigo-500 to-indigo-600 text-white shadow-lg shadow-indigo-200'
+                                        : 'border border-slate-200 bg-white text-slate-600 hover:border-indigo-200 hover:bg-indigo-50'
                                         }`}
                                 >
                                     {page}

@@ -1,0 +1,13 @@
+{
+    "version": 2,
+    "framework": "nextjs",
+    "buildCommand": "npm run build",
+    "installCommand": "npm install",
+    "outputDirectory": ".next",
+    "rewrites": [
+        {
+            "source": "/api/:path*",
+            "destination": "https://smartpos-backend-7ee9.onrender.com/api/:path*"
+        }
+    ]
+}
