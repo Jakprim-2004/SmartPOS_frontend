@@ -1,4 +1,5 @@
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://smartpos-backend-7ee9.onrender.com/api';
+const BASE_URL = rawApiUrl.endsWith('/api') ? rawApiUrl : `${rawApiUrl}/api`;
 
 export async function getSales(params?: {
     status?: string;
