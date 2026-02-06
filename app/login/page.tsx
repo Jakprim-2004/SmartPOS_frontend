@@ -30,6 +30,8 @@ export default function AdminLoginPage() {
             // Store token & user info
             if (data.access_token) {
                 localStorage.setItem('access_token', data.access_token);
+                // Also set a cookie so the middleware can see it
+                document.cookie = `access_token=${data.access_token}; path=/; max-age=${7 * 24 * 60 * 60}; samesite=lax`;
             }
             localStorage.setItem('user', JSON.stringify(data.user));
 
