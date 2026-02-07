@@ -6,7 +6,7 @@ import Image from "next/image";
 
 interface StockTableProps {
     data: any[];
-    tab: 'notInStock' | 'inStock' | 'lowStock' | 'history';
+    tab: 'all' | 'notInStock' | 'inStock' | 'lowStock' | 'history';
     selectedIds: number[];
     onSelect: (id: number) => void;
     onAddStock: (item: any) => void;
@@ -39,6 +39,7 @@ export default function StockTable({
 }: StockTableProps) {
     const isHistory = tab === 'history';
     const totalPages = Math.ceil(totalItems / itemsPerPage);
+    // ...
 
     // Generate page numbers
     const getPageNumbers = () => {
@@ -233,11 +234,11 @@ export default function StockTable({
             </div>
 
             {/* Pagination */}
-            {totalPages > 1 && (
-                <div className="flex items-center justify-between p-4 border-t border-slate-100 bg-slate-50/50">
-                    <div className="text-sm text-slate-500 font-medium">
-                        แสดง {(currentPage - 1) * itemsPerPage + 1} - {Math.min(currentPage * itemsPerPage, totalItems)} จาก {totalItems} รายการ
-                    </div>
+            <div className="flex items-center justify-between p-4 border-t border-slate-100 bg-slate-50/50">
+                <div className="text-sm text-slate-500 font-medium">
+                    แสดง {totalItems > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0} - {Math.min(currentPage * itemsPerPage, totalItems)} จาก {totalItems} รายการ
+                </div>
+                {totalPages > 0 && (
                     <div className="flex items-center gap-1.5">
                         <button
                             onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
@@ -273,8 +274,8 @@ export default function StockTable({
                             <ChevronRight className="w-4 h-4 text-slate-500" />
                         </button>
                     </div>
-                </div>
-            )}
+                )}
+            </div>
         </div>
     );
 }

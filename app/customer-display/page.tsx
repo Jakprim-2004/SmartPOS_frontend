@@ -280,9 +280,6 @@ export default function CustomerDisplayPage() {
                         )}
                     </div>
                 )}
-
-                {/* Footer hint */}
-                <p className="absolute bottom-8 text-slate-300 text-sm">กรุณาสแกนสินค้าเพื่อเริ่มต้น</p>
             </div>
         );
     }

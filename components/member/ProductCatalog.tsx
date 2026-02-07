@@ -5,6 +5,7 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import toast from "react-hot-toast";
 import { Product } from "@/lib/types";
 import { getProducts } from "@/lib/api/products";
+import { getCategories, Category } from "@/lib/api/categories";
 
 interface ProductCatalogProps {
     onAddToCart: (product: Product) => void;
@@ -15,9 +16,13 @@ const ITEMS_PER_PAGE = 30;
 
 export default function ProductCatalog({ onAddToCart, shopId }: ProductCatalogProps) {
     const [searchTerm, setSearchTerm] = useState("");
-    const [category, setCategory] = useState("All");
+    const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
     const [products, setProducts] = useState<Product[]>([]);
-    const [allCategories, setAllCategories] = useState<string[]>(["All"]);
+
+    // Categories state with 'All' option
+    const [categories, setCategories] = useState<{ id: number | null, name: string }[]>([
+        { id: null, name: "ทั้งหมด" }
+    ]);
 
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
@@ -26,7 +31,7 @@ export default function ProductCatalog({ onAddToCart, shopId }: ProductCatalogPr
 
     const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
 
-    // Fetch products with pagination
+    // Fetch products with pagination and filters
     const fetchProducts = useCallback(async (page: number = 1) => {
         if (!shopId) return;
         setIsLoading(true);
@@ -37,7 +42,8 @@ export default function ProductCatalog({ onAddToCart, shopId }: ProductCatalogPr
                 shopId,
                 limit: ITEMS_PER_PAGE,
                 offset,
-                search: searchTerm || undefined
+                search: searchTerm || undefined,
+                categoryId: selectedCategoryId || undefined // Send categoryId to backend
             });
 
             if (result && result.data) {
@@ -54,26 +60,18 @@ export default function ProductCatalog({ onAddToCart, shopId }: ProductCatalogPr
         } finally {
             setIsLoading(false);
         }
-    }, [shopId, searchTerm]);
+    }, [shopId, searchTerm, selectedCategoryId]);
 
-    // Fetch categories once (without pagination filter)
+    // Fetch categories on mount
     useEffect(() => {
         const loadCategories = async () => {
             if (!shopId) return;
             try {
-                const result = await getProducts({ shopId, limit: 1000 });
-                if (result && result.data) {
-                    const uniqueCats = new Set<string>(["All"]);
-                    result.data.forEach((p: Product) => {
-                        const cat = p.category;
-                        if (typeof cat === 'string') {
-                            uniqueCats.add(cat);
-                        } else if (typeof cat === 'object' && cat !== null && 'name' in cat) {
-                            uniqueCats.add((cat as any).name);
-                        }
-                    });
-                    setAllCategories(Array.from(uniqueCats));
-                }
+                const cats = await getCategories(shopId);
+                setCategories([
+                    { id: null, name: "ทั้งหมด" },
+                    ...cats.map((c: Category) => ({ id: c.id, name: c.name }))
+                ]);
             } catch (err) {
                 console.error("Failed to load categories:", err);
             }
@@ -81,22 +79,15 @@ export default function ProductCatalog({ onAddToCart, shopId }: ProductCatalogPr
         loadCategories();
     }, [shopId]);
 
-    // Fetch when page changes
+    // Fetch when page changes or filters change
     useEffect(() => {
         fetchProducts(currentPage);
     }, [currentPage, fetchProducts]);
 
-    // Reset page when search changes
+    // Reset page when search or category changes
     useEffect(() => {
         setCurrentPage(1);
-    }, [searchTerm]);
-
-    // Client-side category filter (since API may not support category filter)
-    const filteredProducts = useMemo(() => products.filter(p => {
-        if (category === "All") return true;
-        const catName = typeof p.category === 'object' && p.category !== null ? (p.category as any).name : p.category;
-        return catName === category;
-    }), [products, category]);
+    }, [searchTerm, selectedCategoryId]);
 
     // Handle page change
     const handlePageChange = (page: number) => {
@@ -138,16 +129,16 @@ export default function ProductCatalog({ onAddToCart, shopId }: ProductCatalogPr
                 </div>
 
                 <div className="flex gap-3 overflow-x-auto pb-2 hide-scrollbar">
-                    {allCategories.map(cat => (
+                    {categories.map(cat => (
                         <button
-                            key={cat}
-                            onClick={() => setCategory(cat)}
-                            className={`px-5 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all ${category === cat
+                            key={cat.id ?? 'all'}
+                            onClick={() => setSelectedCategoryId(cat.id)}
+                            className={`px-5 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all ${selectedCategoryId === cat.id
                                 ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200 scale-105'
                                 : 'bg-slate-50 text-slate-600 border border-slate-200 hover:bg-slate-100'
                                 }`}
                         >
-                            {cat}
+                            {cat.name}
                         </button>
                     ))}
                 </div>
@@ -163,7 +154,7 @@ export default function ProductCatalog({ onAddToCart, shopId }: ProductCatalogPr
                 )}
 
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                    {filteredProducts.map(product => (
+                    {products.map(product => (
                         <div key={product.id} className="bg-white rounded-xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-md transition-all group">
                             <div className="aspect-square relative overflow-hidden bg-slate-100">
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -195,7 +186,7 @@ export default function ProductCatalog({ onAddToCart, shopId }: ProductCatalogPr
                 </div>
 
                 {/* Empty state */}
-                {!isLoading && filteredProducts.length === 0 && (
+                {!isLoading && products.length === 0 && (
                     <div className="text-center py-12 text-slate-400">
                         <Search className="w-12 h-12 mx-auto mb-4 opacity-30" />
                         <p>ไม่พบสินค้า</p>
@@ -227,8 +218,8 @@ export default function ProductCatalog({ onAddToCart, shopId }: ProductCatalogPr
                                     onClick={() => handlePageChange(page as number)}
                                     disabled={isLoading}
                                     className={`w-9 h-9 flex items-center justify-center rounded-xl font-bold text-sm transition-all ${currentPage === page
-                                            ? 'bg-gradient-to-br from-indigo-500 to-indigo-600 text-white shadow-lg shadow-indigo-200'
-                                            : 'border border-slate-200 bg-white text-slate-600 hover:border-indigo-200 hover:bg-indigo-50'
+                                        ? 'bg-gradient-to-br from-indigo-500 to-indigo-600 text-white shadow-lg shadow-indigo-200'
+                                        : 'border border-slate-200 bg-white text-slate-600 hover:border-indigo-200 hover:bg-indigo-50'
                                         }`}
                                 >
                                     {page}

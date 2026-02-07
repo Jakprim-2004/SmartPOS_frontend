@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Search, Edit2, Trash2, FolderTree, ArrowLeft } from "lucide-react";
+import { Plus, Search, Edit2, Trash2, FolderTree, ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import { getCategories, createCategory, updateCategory, deleteCategory, Category } from "@/lib/api/categories";
@@ -14,17 +14,32 @@ export default function CategoryPage() {
     const [editingCategory, setEditingCategory] = useState<Category | null>(null);
     const [formData, setFormData] = useState({ name: "", description: "" });
 
-    useEffect(() => {
-        loadCategories();
-    }, []);
+    // Pagination
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalItems, setTotalItems] = useState(0);
+    const itemsPerPage = 30;
 
-    const loadCategories = async () => {
+    useEffect(() => {
+        loadCategories(currentPage);
+    }, [currentPage]);
+
+    const loadCategories = async (page: number) => {
         setLoading(true);
         try {
-            const data = await getCategories();
-            setCategories(data);
+            const res = await getCategories({ page, limit: itemsPerPage });
+            if (res && res.data) {
+                setCategories(res.data);
+                setTotalItems(res.total);
+            } else if (Array.isArray(res)) {
+                setCategories(res);
+                setTotalItems(res.length);
+            } else {
+                setCategories([]);
+                setTotalItems(0);
+            }
         } catch (error) {
             console.error("Failed to load categories", error);
+            setCategories([]);
         } finally {
             setLoading(false);
         }
@@ -52,7 +67,7 @@ export default function CategoryPage() {
                 toast.success("เพิ่มหมวดหมู่เรียบร้อย");
             }
             setIsModalOpen(false);
-            loadCategories();
+            loadCategories(currentPage);
         } catch (error) {
             toast.error("ดำเนินการไม่สำเร็จ");
         }
@@ -63,15 +78,18 @@ export default function CategoryPage() {
         try {
             await deleteCategory(id);
             toast.success("ลบหมวดหมู่เรียบร้อย");
-            loadCategories();
+            loadCategories(currentPage);
         } catch (error) {
             toast.error("ไม่สามารถลบได้ (อาจมีสินค้าที่ใช้งานหมวดหมู่นี้อยู่)");
         }
     };
 
+    // Client-side filtering only filters the current page's data
     const filteredCategories = categories.filter(c =>
         c.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
+
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
 
     return (
         <div className="p-8 font-sans">
@@ -102,7 +120,7 @@ export default function CategoryPage() {
                 <Search className="text-slate-400 w-5 h-5" />
                 <input
                     type="text"
-                    placeholder="ค้นหาหมวดหมู่..."
+                    placeholder="ค้นหาหมวดหมู่ (ในหน้านี้)..."
                     className="flex-1 outline-none text-slate-700"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -151,6 +169,57 @@ export default function CategoryPage() {
                     </tbody>
                 </table>
             </div>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+                <div className="flex justify-between items-center mt-6">
+                    <div className="text-sm text-slate-500">
+                        แสดงหน้า {currentPage} จาก {totalPages} (ทั้งหมด {totalItems} รายการ)
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                            disabled={currentPage === 1 || loading}
+                            className="p-2 rounded-lg border border-slate-200 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            <ChevronLeft className="w-5 h-5 text-slate-600" />
+                        </button>
+
+                        {/* Page Numbers */}
+                        <div className="flex gap-1">
+                            {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                                let pageNum = i + 1;
+                                if (totalPages > 5) {
+                                    if (currentPage <= 3) pageNum = i + 1;
+                                    else if (currentPage >= totalPages - 2) pageNum = totalPages - 4 + i;
+                                    else pageNum = currentPage - 2 + i;
+                                }
+
+                                return (
+                                    <button
+                                        key={pageNum}
+                                        onClick={() => setCurrentPage(pageNum)}
+                                        className={`w-9 h-9 rounded-lg font-medium text-sm transition-colors ${currentPage === pageNum
+                                            ? 'bg-indigo-600 text-white'
+                                            : 'border border-slate-200 text-slate-600 hover:bg-slate-50'
+                                            }`}
+                                    >
+                                        {pageNum}
+                                    </button>
+                                );
+                            })}
+                        </div>
+
+                        <button
+                            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                            disabled={currentPage === totalPages || loading}
+                            className="p-2 rounded-lg border border-slate-200 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            <ChevronRight className="w-5 h-5 text-slate-600" />
+                        </button>
+                    </div>
+                </div>
+            )}
 
             {/* Modal */}
             {isModalOpen && (

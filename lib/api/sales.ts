@@ -22,16 +22,26 @@ export async function getSales(params?: {
     const queryString = queryParams.toString();
     const url = `${BASE_URL}/sales${queryString ? `?${queryString}` : ''}`;
 
+    const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
+    const headers: any = {};
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+
     const res = await fetch(url, {
-        credentials: 'include'
+        credentials: 'include',
+        headers
     });
     if (!res.ok) return { data: [], total: 0, limit: 10, offset: 0, nextPage: null };
     return res.json();
 }
 
 export async function getSalesByCustomer(customerId: number): Promise<{ data: any[], total: number }> {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
+    const headers: any = {};
+    headers['Authorization'] = `Bearer ${token}`;
+
     const res = await fetch(`${BASE_URL}/sales/customer/${customerId}`, {
-        credentials: 'include'
+        credentials: 'include',
+        headers
     });
     if (!res.ok) return { data: [], total: 0 };
     return res.json();
@@ -100,9 +110,14 @@ export async function getProductSalesStats(params?: {
 }
 
 export async function createSale(data: any) {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
+
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+
     const res = await fetch(`${BASE_URL}/sales`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: headers,
         credentials: 'include',
         body: JSON.stringify(data),
     });
@@ -114,9 +129,14 @@ export async function createSale(data: any) {
 }
 
 export async function updateSale(id: number, data: any) {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
+
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+
     const res = await fetch(`${BASE_URL}/sales/${id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: headers,
         credentials: 'include',
         body: JSON.stringify(data),
     });
@@ -128,9 +148,14 @@ export async function updateSale(id: number, data: any) {
 }
 
 export async function deleteSale(id: number) {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
+    const headers: any = {};
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+
     const res = await fetch(`${BASE_URL}/sales/${id}`, {
         method: 'DELETE',
         credentials: 'include',
+        headers
     });
     if (!res.ok) {
         const err = await res.json();

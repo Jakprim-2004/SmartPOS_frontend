@@ -8,8 +8,27 @@ export interface Category {
     created_at: string;
 }
 
-export async function getCategories(shopId?: string): Promise<Category[]> {
-    const url = shopId ? `${BASE_URL}/categories?shopId=${shopId}` : `${BASE_URL}/categories`;
+export async function getCategories(params?: { shopId?: string; page?: number; limit?: number } | string): Promise<any> {
+    let url = `${BASE_URL}/categories`;
+    const queryParams = new URLSearchParams();
+
+    if (typeof params === 'string') {
+        queryParams.append('shopId', params);
+    } else if (typeof params === 'object') {
+        if (params.shopId) queryParams.append('shopId', params.shopId);
+
+        // Convert page to offset for backend
+        if (params.page && params.limit) {
+            const offset = (params.page - 1) * params.limit;
+            queryParams.append('offset', offset.toString());
+            queryParams.append('limit', params.limit.toString());
+        } else if (params.limit) {
+            queryParams.append('limit', params.limit.toString());
+        }
+    }
+
+    const queryString = queryParams.toString();
+    if (queryString) url += `?${queryString}`;
 
     const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
     const headers: any = {};

@@ -1,37 +1,85 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🚀 Smart POS Cloud - Frontend
 
-## Getting Started
+ระบบจัดการจุดขาย (Point of Sale)  พัฒนาด้วย Next.js 16+ และดีไซน์ทันสมัย เพื่อการจัดการร้านค้าที่มีประสิทธิภาพสูงสุด
 
-First, run the development server:
+## 🌟 คุณสมบัติเด่น (Features)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **ระบบขายหน้าร้าน (POS System)**: ทำรายการขายรวดเร็ว รองรับการค้นหาสินค้าและสแกนบาร์โค้ด
+- **การจัดการสต็อก (Inventory Management)**: ติดตามจำนวนสินค้าแบบ Real-time แจ้งเตือนเมื่อสต็อกใกล้หมด
+- **ระบบสมาชิก (Customer & Rewards)**: สะสมแต้ม แลกของรางวัล และดูประวัติการซื้อของลูกค้า
+- **แดชบอร์ดสรุปผล (Admin Dashboard)**: กราฟสรุปยอดขาย กำไร และสถิติสินค้าขายดี
+- **ระบบบิลและประวัติ (Billing & History)**: ตรวจสอบย้อนหลัง พิมพ์บิลล่าสุด และจัดการรายการค้างชำระ
+- **ความปลอดภัยสูง (Security)**: ระบบล็อกอินแยก Role (Admin/Staff) พร้อมการป้องกันเส้นทางด้วย Middleware
+
+## 👥 กลุ่มผู้ใช้ในระบบ (User Roles)
+
+ระบบรองรับผู้ใช้งาน 2 กลุ่มหลัก เพื่อแบ่งแยกหน้าที่และความรับผิดชอบ:
+
+- **1. ผู้ดูแลระบบ (Admin)**: 
+  - เข้าถึง **แดชบอร์ดการจัดการ (Admin Dashboard)** เพื่อดูภาพรวมยอดขาย กำไร และต้นทุน
+  - จัดการข้อมูลสาขา, ตั้งค่าระบบ, และสรุปรายงานภาพรวมทั้งหมด
+  - จัดการคูปอง โปรโมชั่น และข้อมูลพื้นฐานของร้านค้า
+
+- **2. พนักงานขาย (Staff)**:
+  - เข้าถึง **ระบบขายหน้าร้าน (POS Interface)** เพื่อทำรายการขายให้ลูกค้า
+  - จัดการสต็อกสินค้าหน้าร้าน ตรวจสอบราคาสินค้า และยอดขายประจำวัน
+  - จัดการข้อมูลลูกค้าและระบบสะสมแต้ม
+
+- **3. ลูกค้าสมาชิก (Customer)**:
+  - เข้าถึง **ระบบสมาชิก (Member Portal)** เพื่อตรวจสอบแต้มสะสมและประวัติการซื้อ
+  - ดูข่าวสาร โปรโมชั่นปัจจุบัน และรายการของรางวัลที่สามารถแลกได้
+  - ใช้แต้มแลกของรางวัลผ่านระบบสมาชิก
+
+## 🛠 เทคโนโลยีที่ใช้ (Tech Stack)
+
+- **Framework**: [Next.js 16 (App Router)](https://nextjs.org/)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Styling**: [Tailwind CSS 4](https://tailwindcss.com/)
+- **Icons**: [Lucide React](https://lucide.dev/)
+- **Animations**: [Framer Motion](https://www.framer.com/motion/)
+- **Database Client**: [Supabase JS](https://supabase.com/docs/reference/javascript/introduction)
+- **Notifications**: [React Hot Toast](https://react-hot-toast.com/)
+
+## 🌐 ลิงก์ระบบ (Production Links)
+
+- **Frontend URL**: [https://smart-pos-frontend-gamma.vercel.app/](https://smart-pos-frontend-gamma.vercel.app/)
+- **Backend API**: [https://smartpos-backend-7ee9.onrender.com/api](https://smartpos-backend-7ee9.onrender.com/api)
+
+## ⚙️ การตั้งค่าระบบ (Environment Variables)
+
+สร้างไฟล์ `.env.local` ในโฟลเดอร์หลัก และกำหนดค่าดังนี้:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+NEXT_PUBLIC_API_URL=https://smartpos-backend-7ee9.onrender.com/api
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🚀 การรันโปรเจกต์ในเครื่อง (Local Development)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. ติดตั้ง Dependencies:
+   ```bash
+   npm install
+   ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2. รันโหมด Development:
+   ```bash
+   npm run dev
+   ```
 
-## Learn More
+3. เข้าใช้งานผ่านเบราว์เซอร์ที่: `http://localhost:3000`
 
-To learn more about Next.js, take a look at the following resources:
+## 🔑 ข้อมูลการเข้าใช้งานทดสอบ (Test Account)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Username**: `smartpos`
+- **Password**: `123456789`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📁 โครงสร้างโปรเจกต์
 
-## Deploy on Vercel
+- `/app`: หน้าเว็บไซต์หลักและระบบ Routing
+- `/components`: ส่วนประกอบ UI แบ่งตามหมวดหมู่ (POS, Dashboard, Bills)
+- `/lib/api`: ฟังก์ชันสำหรับเชื่อมต่อกับ Backend API แยกตาม Module
+- `/public`: ไฟล์ Static เช่น รูปภาพ และ Assets ต่างๆ
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-"# SmartPOS_frontend" 
+---
+**Secured by Smart POS Cloud Team**

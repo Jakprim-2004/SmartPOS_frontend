@@ -50,7 +50,14 @@ export async function getCustomers(params?: { limit?: number; offset?: number; s
 }
 
 export async function lookupCustomerByPhone(phone: string): Promise<Customer | null> {
-    const res = await fetch(`${BASE_URL}/customers/phone/${phone}`, { credentials: 'include' });
+    const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
+    const headers: any = {};
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+
+    const res = await fetch(`${BASE_URL}/customers/phone/${phone}`, {
+        credentials: 'include',
+        headers
+    });
     if (!res.ok) return null;
     try {
         const c = await res.json();
@@ -64,7 +71,14 @@ export async function lookupCustomerByPhone(phone: string): Promise<Customer | n
 }
 
 export async function getCustomerById(id: number): Promise<Customer | null> {
-    const res = await fetch(`${BASE_URL}/customers/${id}`, { credentials: 'include' });
+    const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
+    const headers: any = {};
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+
+    const res = await fetch(`${BASE_URL}/customers/${id}`, {
+        credentials: 'include',
+        headers
+    });
     if (!res.ok) return null;
     try {
         const c = await res.json();
@@ -78,7 +92,14 @@ export async function getCustomerById(id: number): Promise<Customer | null> {
 }
 
 export async function searchCustomers(query: string): Promise<Customer[]> {
-    const res = await fetch(`${BASE_URL}/customers?search=${encodeURIComponent(query)}`, { credentials: 'include' });
+    const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
+    const headers: any = {};
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+
+    const res = await fetch(`${BASE_URL}/customers?search=${encodeURIComponent(query)}`, {
+        credentials: 'include',
+        headers
+    });
     if (!res.ok) return [];
     try {
         const result = await res.json();
@@ -118,9 +139,14 @@ export async function registerMember(data: { name: string; phone: string; birthd
 }
 
 export async function updateCustomer(id: number, data: Partial<Customer>): Promise<Customer> {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
+
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+
     const res = await fetch(`${BASE_URL}/customers/${id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: headers,
         credentials: 'include',
         body: JSON.stringify(data),
     });
@@ -132,9 +158,14 @@ export async function updateCustomer(id: number, data: Partial<Customer>): Promi
 }
 
 export async function deleteCustomer(id: number): Promise<void> {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
+    const headers: any = {};
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+
     const res = await fetch(`${BASE_URL}/customers/${id}`, {
         method: 'DELETE',
         credentials: 'include',
+        headers
     });
     if (!res.ok) {
         throw new Error('ลบลูกค้าไม่สำเร็จ');

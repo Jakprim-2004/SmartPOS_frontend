@@ -47,7 +47,15 @@ export async function getActivePromotions(shopId?: string): Promise<Promotion[]>
     const url = shopId
         ? `${BASE_URL}/promotions/active?shopId=${shopId}`
         : `${BASE_URL}/promotions/active`;
-    const res = await fetch(url, { credentials: 'include' });
+
+    const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
+    const headers: any = {};
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+
+    const res = await fetch(url, {
+        credentials: 'include',
+        headers
+    });
     if (!res.ok) throw new Error('ดึงโปรโมชั่นไม่สำเร็จ');
     return res.json();
 }

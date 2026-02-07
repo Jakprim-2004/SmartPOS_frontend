@@ -15,7 +15,7 @@ import { getProducts, addProductStock, getAllStockTransactions } from "@/lib/api
 const ITEMS_PER_PAGE = 30;
 
 export default function StockPage() {
-    const [activeTab, setActiveTab] = useState<'notInStock' | 'inStock' | 'lowStock' | 'history'>('notInStock');
+    const [activeTab, setActiveTab] = useState<'all' | 'notInStock' | 'inStock' | 'lowStock' | 'history'>('all');
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedIds, setSelectedIds] = useState<number[]>([]);
     const [showBulkModal, setShowBulkModal] = useState(false);
@@ -28,6 +28,7 @@ export default function StockPage() {
 
     // Tab counts (fetched once)
     const [tabCounts, setTabCounts] = useState({
+        all: 0,
         notInStock: 0,
         inStock: 0,
         lowStock: 0,
@@ -44,7 +45,8 @@ export default function StockPage() {
     // Fetch tab counts (only once or when data changes)
     const fetchTabCounts = useCallback(async () => {
         try {
-            const [notInStockRes, inStockRes, lowStockRes, historyData] = await Promise.all([
+            const [allRes, notInStockRes, inStockRes, lowStockRes, historyData] = await Promise.all([
+                getProducts({ limit: 1 }),
                 getProducts({ limit: 1, stockStatus: 'out_of_stock' }),
                 getProducts({ limit: 1, stockStatus: 'in_stock' }),
                 getProducts({ limit: 1, stockStatus: 'low_stock' }),
@@ -52,6 +54,7 @@ export default function StockPage() {
             ]);
 
             setTabCounts({
+                all: allRes.total || 0,
                 notInStock: notInStockRes.total || 0,
                 inStock: inStockRes.total || 0,
                 lowStock: lowStockRes.total || 0,
@@ -81,6 +84,7 @@ export default function StockPage() {
                     case 'notInStock': stockStatus = 'out_of_stock'; break;
                     case 'inStock': stockStatus = 'in_stock'; break;
                     case 'lowStock': stockStatus = 'low_stock'; break;
+                    case 'all': stockStatus = undefined; break;
                 }
 
                 const result = await getProducts({
@@ -185,7 +189,7 @@ export default function StockPage() {
     };
 
     // Handle tab change
-    const handleTabChange = (tab: 'notInStock' | 'inStock' | 'lowStock' | 'history') => {
+    const handleTabChange = (tab: 'all' | 'notInStock' | 'inStock' | 'lowStock' | 'history') => {
         setActiveTab(tab);
         setSelectedIds([]);
         setSearchTerm("");
