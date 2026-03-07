@@ -19,6 +19,12 @@ jobs:
           CLEAN_URL=$(echo "${{ secrets.SUPABASE_URL }}" | tr -d '"' | tr -d "'" | tr -d ' ' | tr -d '\n' | tr -d '\r')
           CLEAN_KEY=$(echo "${{ secrets.SUPABASE_ANON_KEY }}" | tr -d '"' | tr -d "'" | tr -d ' ' | tr -d '\n' | tr -d '\r')
           
+          if [ -z "$CLEAN_URL" ] || [ -z "$CLEAN_KEY" ]; then
+            echo "❌ ERROR: Supabase URL or Anon Key is missing from GitHub Secrets!"
+            echo "Please add SUPABASE_URL and SUPABASE_ANON_KEY to your repository secrets."
+            exit 1
+          fi
+
           # Remove trailing slash from URL if present
           CLEAN_URL=${CLEAN_URL%/}
 
@@ -34,7 +40,7 @@ jobs:
           echo "--------------------------------------------"
 
           HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
-            "${CLEAN_URL}/rest/v1/?apikey=${CLEAN_KEY}" \
+            ${CLEAN_URL}/rest/v1/?apikey=${CLEAN_KEY} \
             -H "apikey: ${CLEAN_KEY}" \
             -H "Authorization: Bearer ${CLEAN_KEY}")
 
