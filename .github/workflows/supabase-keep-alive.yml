@@ -15,8 +15,15 @@ jobs:
     steps:
       - name: Ping Supabase REST API
         run: |
+          # Sanitize inputs to prevent curl URL formatting errors
+          CLEAN_URL=$(echo "${{ secrets.SUPABASE_URL }}" | tr -d '"' | tr -d "'" | tr -d ' ' | tr -d '\n' | tr -d '\r')
+          CLEAN_KEY=$(echo "${{ secrets.SUPABASE_ANON_KEY }}" | tr -d '"' | tr -d "'" | tr -d ' ' | tr -d '\n' | tr -d '\r')
+          
+          # Remove trailing slash from URL if present
+          CLEAN_URL=${CLEAN_URL%/}
+
           PING_TIME=$(date '+%Y-%m-%d %H:%M:%S UTC')
-          SUPABASE_HOST=$(echo "${{ secrets.SUPABASE_URL }}" | sed 's|https://||')
+          SUPABASE_HOST=$(echo "$CLEAN_URL" | sed 's|https://||' | sed 's|http://||')
 
           echo "============================================"
           echo "  🚀 Supabase Keep-Alive Ping"
@@ -27,9 +34,9 @@ jobs:
           echo "--------------------------------------------"
 
           HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
-            "${{ secrets.SUPABASE_URL }}/rest/v1/?apikey=${{ secrets.SUPABASE_ANON_KEY }}" \
-            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
-            -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}")
+            "${CLEAN_URL}/rest/v1/?apikey=${CLEAN_KEY}" \
+            -H "apikey: ${CLEAN_KEY}" \
+            -H "Authorization: Bearer ${CLEAN_KEY}")
 
           echo "  📡 HTTP Status : $HTTP_STATUS"
 
