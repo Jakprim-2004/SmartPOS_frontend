@@ -3,9 +3,8 @@ name: Supabase Keep-Alive
 on:
   schedule:
     # Runs every 3 days at 08:00 UTC (15:00 Bangkok time)
-    # Cron: minute hour day-of-month month day-of-week
     - cron: "0 8 */3 * *"
-  workflow_dispatch: # Allow manual trigger from GitHub Actions UI
+  workflow_dispatch:
 
 jobs:
   keep-alive:
@@ -14,22 +13,12 @@ jobs:
 
     steps:
       - name: Ping Supabase REST API
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         run: |
-          # Sanitize inputs to prevent curl URL formatting errors
-          CLEAN_URL=$(echo "${{ secrets.SUPABASE_URL }}" | tr -d '"' | tr -d "'" | tr -d ' ' | tr -d '\n' | tr -d '\r')
-          CLEAN_KEY=$(echo "${{ secrets.SUPABASE_ANON_KEY }}" | tr -d '"' | tr -d "'" | tr -d ' ' | tr -d '\n' | tr -d '\r')
-          
-          if [ -z "$CLEAN_URL" ] || [ -z "$CLEAN_KEY" ]; then
-            echo "❌ ERROR: Supabase URL or Anon Key is missing from GitHub Secrets!"
-            echo "Please add SUPABASE_URL and SUPABASE_ANON_KEY to your repository secrets."
-            exit 1
-          fi
-
-          # Remove trailing slash from URL if present
-          CLEAN_URL=${CLEAN_URL%/}
-
           PING_TIME=$(date '+%Y-%m-%d %H:%M:%S UTC')
-          SUPABASE_HOST=$(echo "$CLEAN_URL" | sed 's|https://||' | sed 's|http://||')
+          SUPABASE_HOST=$(echo "$SUPABASE_URL" | sed 's|https://||')
 
           echo "============================================"
           echo "  🚀 Supabase Keep-Alive Ping"
@@ -39,10 +28,7 @@ jobs:
           echo "  📍 Endpoint: /rest/v1/"
           echo "--------------------------------------------"
 
-          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
-            ${CLEAN_URL}/rest/v1/?apikey=${CLEAN_KEY} \
-            -H "apikey: ${CLEAN_KEY}" \
-            -H "Authorization: Bearer ${CLEAN_KEY}")
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "${SUPABASE_URL}/rest/v1/" -H "apikey: ${SUPABASE_ANON_KEY}" -H "Authorization: Bearer ${SUPABASE_ANON_KEY}")
 
           echo "  📡 HTTP Status : $HTTP_STATUS"
 
