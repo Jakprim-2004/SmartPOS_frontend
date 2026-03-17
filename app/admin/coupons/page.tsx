@@ -132,14 +132,14 @@ export default function CouponsPage() {
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                 <div>
-                    <h2 className="text-2xl font-bold text-slate-800">จัดการคูปอง</h2>
-                    <p className="text-slate-500">สร้างคูปองส่วนลดและของรางวัลแลกแต้ม</p>
+                    <h2 className="text-xl sm:text-2xl font-bold text-slate-800">จัดการคูปอง</h2>
+                    <p className="text-sm sm:text-base text-slate-500">สร้างคูปองส่วนลดและของรางวัลแลกแต้ม</p>
                 </div>
                 <button
                     onClick={handleOpenCreate}
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-indigo-200 transition-all active:scale-95"
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-indigo-200 transition-all active:scale-95 text-sm sm:text-base"
                 >
                     <Plus className="w-5 h-5" />
                     สร้างคูปองใหม่
@@ -147,7 +147,7 @@ export default function CouponsPage() {
             </div>
 
             {/* Filter */}
-            <div className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm flex gap-4">
+            <div className="bg-white p-3 sm:p-4 rounded-xl border border-slate-100 shadow-sm flex flex-col sm:flex-row gap-3 sm:gap-4">
                 <div className="relative flex-1">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
                     <input
@@ -225,7 +225,7 @@ export default function CouponsPage() {
 
             {/* Pagination Controls */}
             {!isLoading && totalItems > 0 && (
-                <div className="flex items-center justify-between p-6 border-t border-slate-100 bg-white rounded-2xl shadow-sm">
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 sm:p-6 border-t border-slate-100 bg-white rounded-2xl shadow-sm">
                     <div className="text-sm text-slate-500 font-medium">
                         แสดง {Math.min((currentPage - 1) * itemsPerPage + 1, totalItems)} - {Math.min(currentPage * itemsPerPage, totalItems)} จาก {totalItems.toLocaleString()} รายการ
                     </div>

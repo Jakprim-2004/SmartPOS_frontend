@@ -168,21 +168,65 @@ export default function NewsPage() {
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                 <div>
-                    <h2 className="text-2xl font-bold text-slate-800">ข่าวสาร & ประกาศ</h2>
-                    <p className="text-slate-500">จัดการเนื้อหาข่าวสารที่จะแจ้งเตือนลูกค้า</p>
+                    <h2 className="text-xl sm:text-2xl font-bold text-slate-800">ข่าวสาร & ประกาศ</h2>
+                    <p className="text-sm sm:text-base text-slate-500">จัดการเนื้อหาข่าวสารที่จะแจ้งเตือนลูกค้า</p>
                 </div>
                 <button
                     onClick={handleOpenCreate}
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-indigo-200 transition-all active:scale-95"
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-indigo-200 transition-all active:scale-95 text-sm sm:text-base"
                 >
                     <Plus className="w-5 h-5" />
                     เขียนประกาศใหม่
                 </button>
             </div>
 
-            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden flex flex-col">
+            {/* Mobile Card View */}
+            <div className="md:hidden space-y-3">
+                {isLoading ? (
+                    <div className="flex flex-col items-center justify-center p-12 text-slate-500">
+                        <Loader2 className="w-8 h-8 animate-spin text-indigo-500 mb-2" />
+                        กำลังโหลด...
+                    </div>
+                ) : news.length === 0 ? (
+                    <div className="p-8 text-center text-slate-500 bg-white rounded-xl border border-slate-100">ไม่มีประกาศ</div>
+                ) : news.map((item, index) => (
+                    <div key={item.id} className="bg-white rounded-xl border border-slate-100 shadow-sm p-4 space-y-3">
+                        <div className="flex gap-3">
+                            {(item.imageUrl || item.image_url) && (
+                                <div className="w-16 h-16 rounded-lg bg-slate-100 overflow-hidden flex-shrink-0">
+                                    <img src={item.imageUrl || item.image_url} alt="" className="w-full h-full object-cover" />
+                                </div>
+                            )}
+                            <div className="flex-1 min-w-0">
+                                <div className="font-bold text-slate-800 text-sm">{item.title}</div>
+                                <div className="text-xs text-slate-500 truncate mt-0.5">{item.content}</div>
+                            </div>
+                        </div>
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                                <span className={`px-2 py-1 rounded-full text-xs font-bold inline-flex items-center gap-1 ${item.published ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-600'}`}>
+                                    {item.published ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
+                                    {item.published ? 'เผยแพร่' : 'แบบร่าง'}
+                                </span>
+                                <span className="text-xs text-slate-400">{new Date(item.created_at).toLocaleDateString('th-TH')}</span>
+                            </div>
+                            <div className="flex gap-2">
+                                <button onClick={() => handleEdit(item)} className="p-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-xl transition-colors active:scale-95">
+                                    <Edit2 className="w-4 h-4" />
+                                </button>
+                                <button onClick={() => handleDelete(item.id)} className="p-2 bg-red-50 text-red-500 hover:bg-red-100 rounded-xl transition-colors active:scale-95">
+                                    <Trash2 className="w-4 h-4" />
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            {/* Desktop Table View */}
+            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden flex flex-col hidden md:flex">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left">
                         <thead className="bg-slate-50 border-b border-slate-100">
@@ -257,7 +301,7 @@ export default function NewsPage() {
 
                 {/* Pagination */}
                 {totalPages > 1 && (
-                    <div className="flex items-center justify-between p-4 border-t border-slate-100 bg-slate-50/50">
+                    <div className="flex flex-col sm:flex-row items-center justify-between p-4 border-t border-slate-100 bg-slate-50/50 gap-3">
                         <div className="text-sm text-slate-500 font-medium">
                             แสดง {(currentPage - 1) * ITEMS_PER_PAGE + 1} - {Math.min(currentPage * ITEMS_PER_PAGE, totalItems)} จาก {totalItems} รายการ
                         </div>

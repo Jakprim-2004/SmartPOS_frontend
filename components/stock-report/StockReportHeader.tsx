@@ -7,9 +7,9 @@ export default function StockReportHeader() {
         <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
                 <div>
-                    <h1 className="text-2xl md:text-3xl font-bold text-slate-800 flex items-center gap-3">
+                    <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-slate-800 flex items-center gap-2 sm:gap-3">
                         <div className="p-2 bg-emerald-100 rounded-xl">
-                            <BarChart3 className="w-6 h-6 text-emerald-600" />
+                            <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-600" />
                         </div>
                         รายงาน Stock
                     </h1>

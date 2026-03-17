@@ -60,7 +60,48 @@ export default function BillsTable({
 
     return (
         <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-            <div className="overflow-x-auto">
+            {/* Mobile Card View */}
+            <div className="md:hidden">
+                {bills.length > 0 ? (
+                    <div className="divide-y divide-slate-100">
+                        {bills.map((bill, index) => (
+                            <div key={bill.id} className="p-4 space-y-3">
+                                <div className="flex items-center justify-between">
+                                    <span className="font-bold text-indigo-600 text-sm truncate max-w-[180px]" title={bill.billNumber}>
+                                        #{bill.billNumber}
+                                    </span>
+                                    <span className="text-xs text-slate-400">
+                                        {formatThaiDate(bill.payDate)}
+                                    </span>
+                                </div>
+                                <div className="flex items-center justify-between">
+                                    <span className="font-bold text-slate-800 text-lg">฿{bill.totalAmount.toLocaleString()}</span>
+                                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium ${getPaymentMethodColor(bill.paymentMethod)}`}>
+                                        {getPaymentMethodIcon(bill.paymentMethod)}
+                                        {getPaymentMethodText(bill.paymentMethod)}
+                                    </span>
+                                </div>
+                                <button
+                                    onClick={() => onViewBill(bill)}
+                                    className="w-full py-2 bg-indigo-50 text-indigo-600 rounded-xl font-medium text-sm hover:bg-indigo-100 transition-colors inline-flex items-center justify-center gap-2"
+                                >
+                                    <FileText className="w-4 h-4" />
+                                    ดูรายการ
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="py-16 text-center text-slate-400">
+                        <Package className="w-16 h-16 mx-auto mb-4 opacity-50" />
+                        <p className="text-lg font-medium">ไม่พบข้อมูล</p>
+                        <p className="text-sm mt-1">ลองปรับตัวกรองเพื่อค้นหาใหม่</p>
+                    </div>
+                )}
+            </div>
+
+            {/* Desktop Table */}
+            <div className="overflow-x-auto hidden md:block">
                 <table className="w-full">
                     <thead className="bg-slate-50 border-b border-slate-100">
                         <tr>
@@ -124,7 +165,7 @@ export default function BillsTable({
 
             {/* Pagination */}
             {totalBills > itemsPerPage && (
-                <div className="flex items-center justify-between p-4 border-t border-slate-100">
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 border-t border-slate-100">
                     <div className="text-sm text-slate-500">
                         แสดง {Math.min((currentPage - 1) * itemsPerPage + 1, totalBills)} - {Math.min(currentPage * itemsPerPage, totalBills)} จาก {totalBills} รายการ
                     </div>

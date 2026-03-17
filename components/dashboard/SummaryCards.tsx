@@ -21,8 +21,8 @@ export default function SummaryCards({ data }: SummaryCardsProps) {
                         <TrendingUp className="w-5 h-5" />
                         ยอดขายทั้งหมด
                     </div>
-                    <div className="p-6 text-center">
-                        <h3 className="text-3xl font-bold text-indigo-600 truncate">{data.totalSales.toLocaleString()} <span className="text-sm font-normal text-gray-400">บาท</span></h3>
+                    <div className="p-4 sm:p-6 text-center">
+                        <h3 className="text-xl sm:text-3xl font-bold text-indigo-600 truncate">{data.totalSales.toLocaleString()} <span className="text-sm font-normal text-gray-400">บาท</span></h3>
                     </div>
                 </div>
 
@@ -31,8 +31,8 @@ export default function SummaryCards({ data }: SummaryCardsProps) {
                         <Coins className="w-5 h-5" />
                         ต้นทุนรวม
                     </div>
-                    <div className="p-6 text-center">
-                        <h3 className="text-3xl font-bold text-orange-500 truncate">{data.totalCost.toLocaleString()} <span className="text-sm font-normal text-gray-400">บาท</span></h3>
+                    <div className="p-4 sm:p-6 text-center">
+                        <h3 className="text-xl sm:text-3xl font-bold text-orange-500 truncate">{data.totalCost.toLocaleString()} <span className="text-sm font-normal text-gray-400">บาท</span></h3>
                     </div>
                 </div>
 
@@ -41,8 +41,8 @@ export default function SummaryCards({ data }: SummaryCardsProps) {
                         <Trophy className="w-5 h-5" />
                         กำไรสุทธิ
                     </div>
-                    <div className="p-6 text-center">
-                        <h3 className="text-3xl font-bold text-green-600 truncate">{data.totalProfit.toLocaleString()} <span className="text-sm font-normal text-gray-400">บาท</span></h3>
+                    <div className="p-4 sm:p-6 text-center">
+                        <h3 className="text-xl sm:text-3xl font-bold text-green-600 truncate">{data.totalProfit.toLocaleString()} <span className="text-sm font-normal text-gray-400">บาท</span></h3>
                     </div>
                 </div>
             </div>

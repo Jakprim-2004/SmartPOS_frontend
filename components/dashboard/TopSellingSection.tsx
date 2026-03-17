@@ -17,7 +17,7 @@ export default function TopSellingSection({ topSellingProducts, topSellingCatego
 
             {/* Top Selling Chart */}
             <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 overflow-hidden flex flex-col h-full">
-                <div className="p-5 bg-gradient-to-r from-[#4a5bcc] to-[#5a4289] text-white flex justify-between items-center">
+                <div className="p-4 sm:p-5 bg-gradient-to-r from-[#4a5bcc] to-[#5a4289] text-white flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                     <div className="flex items-center gap-3">
                         <Trophy className="w-6 h-6 text-yellow-300" />
                         <div>
@@ -35,7 +35,7 @@ export default function TopSellingSection({ topSellingProducts, topSellingCatego
                     </select>
                 </div>
 
-                <div className="p-4 overflow-y-auto max-h-[500px]">
+                <div className="p-3 sm:p-4 overflow-y-auto max-h-[400px] sm:max-h-[500px]">
                     {(topSellingViewType === 'products' ? topSellingProducts : topSellingCategories).length === 0 ? (
                         <div className="text-center py-10 text-gray-400">
                             <Trophy className="w-12 h-12 mx-auto mb-3 opacity-20" />
@@ -50,17 +50,14 @@ export default function TopSellingSection({ topSellingProducts, topSellingCatego
                                 const color = colors[index % colors.length];
 
                                 return (
-                                    <div key={index} className="bg-gray-50 rounded-xl p-4 relative overflow-hidden group hover:shadow-md transition-all border-l-4" style={{ borderLeftColor: color }}>
-                                        <div className="absolute top-0 right-0 p-2 opacity-10">
-                                            <span className="text-4xl font-bold" style={{ color: color }}>{index + 1}</span>
-                                        </div>
+                                    <div key={index} className="bg-gray-50 rounded-xl p-3 sm:p-4 relative overflow-hidden group hover:shadow-md transition-all border-l-4" style={{ borderLeftColor: color }}>
                                         <div className="flex justify-between items-center relative z-10">
                                             <div>
-                                                <h6 className="font-bold text-gray-800 text-lg mb-1">{itemName}</h6>
+                                                <h6 className="font-bold text-gray-800 text-base sm:text-lg mb-1">{itemName}</h6>
                                                 <p className="text-gray-500 text-sm">{amount.toLocaleString()} บาท</p>
                                             </div>
                                             <div className="text-right">
-                                                <span className="text-2xl font-bold text-indigo-600 block">{qty}</span>
+                                                <span className="text-xl sm:text-2xl font-bold text-indigo-600 block">{qty}</span>
                                                 <span className="text-xs text-gray-400">ชิ้น</span>
                                             </div>
                                         </div>
@@ -74,7 +71,7 @@ export default function TopSellingSection({ topSellingProducts, topSellingCatego
 
             {/* Payment Methods */}
             <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 overflow-hidden flex flex-col h-full">
-                <div className="p-5 bg-gradient-to-r from-[#4a5bcc] to-[#5a4289] text-white flex items-center gap-3">
+                <div className="p-4 sm:p-5 bg-gradient-to-r from-[#4a5bcc] to-[#5a4289] text-white flex items-center gap-3">
                     <div className="bg-white/20 p-2 rounded-full text-white">
                         <CreditCard className="w-6 h-6" />
                     </div>
@@ -83,16 +80,16 @@ export default function TopSellingSection({ topSellingProducts, topSellingCatego
                         <p className="text-xs opacity-75">สถิติการชำระเงินวันนี้</p>
                     </div>
                 </div>
-                <div className="p-6">
+                <div className="p-4 sm:p-6">
                     {paymentStats.length > 0 ? (
                         <>
                             <div className="text-center mb-6">
-                                <h3 className="text-3xl font-bold text-indigo-600">
+                                <h3 className="text-2xl sm:text-3xl font-bold text-indigo-600">
                                     {paymentStats.reduce((sum, s) => sum + parseFloat(s.total || 0), 0).toLocaleString()} <span className="text-lg text-gray-400 font-normal">บาท</span>
                                 </h3>
                                 <p className="text-gray-400 text-sm">ยอดรวมทั้งหมด</p>
                             </div>
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                                 {paymentStats.map((stat, index) => {
                                     const color = colors[index % colors.length];
                                     const amount = parseFloat(stat.total || 0);

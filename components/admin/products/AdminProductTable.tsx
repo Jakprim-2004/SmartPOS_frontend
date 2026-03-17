@@ -25,7 +25,72 @@ export default function AdminProductTable({
     const totalPages = Math.ceil(totalItems / itemsPerPage);
     return (
         <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-            <div className="overflow-x-auto">
+            {/* Mobile Card View */}
+            <div className="md:hidden">
+                {loading ? (
+                    <div className="divide-y divide-slate-100">
+                        {Array(3).fill(0).map((_, i) => (
+                            <div key={i} className="p-4 animate-pulse"><div className="h-20 bg-slate-50/50 rounded"></div></div>
+                        ))}
+                    </div>
+                ) : products.length === 0 ? (
+                    <div className="px-6 py-16 text-center text-slate-400">
+                        <Package className="w-12 h-12 mx-auto mb-3 opacity-20" />
+                        <p>ไม่พบสินค้าที่ค้นหา</p>
+                    </div>
+                ) : (
+                    <div className="divide-y divide-slate-100">
+                        {products.map((product) => (
+                            <div key={product.id} className="p-4 space-y-3">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-12 h-12 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center overflow-hidden shrink-0">
+                                        {product.imageUrl ? (
+                                            <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" />
+                                        ) : (
+                                            <ImageIcon className="w-5 h-5 text-slate-400" />
+                                        )}
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="font-bold text-slate-800 text-sm">{product.name}</div>
+                                        {product.barcode && (
+                                            <div className="flex items-center gap-1 text-xs text-slate-400 mt-0.5">
+                                                <Barcode className="w-3 h-3" />
+                                                {product.barcode}
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="flex gap-1.5">
+                                        <button onClick={() => onEdit(product)} className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all">
+                                            <Edit2 className="w-4 h-4" />
+                                        </button>
+                                        <button onClick={() => onDelete(product.id)} className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all">
+                                            <Trash2 className="w-4 h-4" />
+                                        </button>
+                                    </div>
+                                </div>
+                                <div className="flex items-center justify-between text-sm">
+                                    <span className="px-2.5 py-1 bg-slate-100 text-slate-600 text-xs font-bold rounded-full border border-slate-200">
+                                        {typeof product.category === 'object' ? product.category?.name : "Uncategorized"}
+                                    </span>
+                                    <div className="flex items-center gap-3">
+                                        <span className="font-bold text-slate-800">฿{product.price.toLocaleString()}</span>
+                                        <span className="text-slate-400 text-xs">ต้นทุน ฿{product.cost.toLocaleString()}</span>
+                                        <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${product.stock <= 5
+                                            ? 'bg-red-50 text-red-600 border border-red-100'
+                                            : 'bg-green-50 text-green-600 border border-green-100'
+                                            }`}>
+                                            {product.stock} ชิ้น
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+
+            {/* Desktop Table */}
+            <div className="overflow-x-auto hidden md:block">
                 <table className="w-full text-left">
                     <thead className="bg-slate-50 border-b border-slate-100">
                         <tr>
@@ -120,7 +185,7 @@ export default function AdminProductTable({
 
             {/* Pagination */}
             {!loading && totalItems > 0 && (
-                <div className="flex items-center justify-between p-6 border-t border-slate-50 bg-slate-50/30">
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 sm:p-6 border-t border-slate-50 bg-slate-50/30">
                     <div className="text-sm text-slate-500 font-medium">
                         แสดง {Math.min((currentPage - 1) * itemsPerPage + 1, totalItems)} - {Math.min(currentPage * itemsPerPage, totalItems)} จาก {totalItems.toLocaleString()} รายการ
                     </div>

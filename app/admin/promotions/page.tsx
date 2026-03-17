@@ -278,14 +278,14 @@ export default function PromotionsPage() {
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                 <div>
-                    <h2 className="text-2xl font-bold text-slate-800">จัดการโปรโมชั่น</h2>
-                    <p className="text-slate-500">สร้างและแก้ไขโปรโมชั่นสำหรับสินค้าในร้าน</p>
+                    <h2 className="text-xl sm:text-2xl font-bold text-slate-800">จัดการโปรโมชั่น</h2>
+                    <p className="text-sm sm:text-base text-slate-500">สร้างและแก้ไขโปรโมชั่นสำหรับสินค้าในร้าน</p>
                 </div>
                 <button
                     onClick={handleOpenCreate}
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-indigo-200 transition-all active:scale-95"
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-indigo-200 transition-all active:scale-95 text-sm sm:text-base"
                 >
                     <Plus className="w-5 h-5" />
                     สร้างโปรโมชั่นใหม่
@@ -293,7 +293,7 @@ export default function PromotionsPage() {
             </div>
 
             {/* Filter Bar */}
-            <div className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm flex gap-4">
+            <div className="bg-white p-3 sm:p-4 rounded-xl border border-slate-100 shadow-sm flex flex-col sm:flex-row gap-3 sm:gap-4">
                 <div className="relative flex-1">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
                     <input
@@ -327,8 +327,8 @@ export default function PromotionsPage() {
                     promotions.map((promo) => {
                         const status = getStatus(promo);
                         return (
-                            <div key={promo.id} className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm flex items-center gap-6 group hover:border-indigo-100 transition-colors">
-                                <div className="w-24 h-24 rounded-lg overflow-hidden bg-slate-100 shrink-0 relative">
+                            <div key={promo.id} className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 group hover:border-indigo-100 transition-colors">
+                                <div className="w-full sm:w-24 h-32 sm:h-24 rounded-lg overflow-hidden bg-slate-100 shrink-0 relative">
                                     <img src={promo.image_url || "https://placehold.co/400x300?text=No+Image"} alt={promo.title} className="w-full h-full object-cover" />
                                 </div>
 
@@ -357,7 +357,7 @@ export default function PromotionsPage() {
                                     </div>
                                 </div>
 
-                                <div className="flex items-center gap-2 px-4">
+                                <div className="flex items-center gap-2 sm:px-4 w-full sm:w-auto">
                                     <button
                                         onClick={() => handleEdit(promo)}
                                         className="p-2.5 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-xl transition-all active:scale-95"
@@ -381,7 +381,7 @@ export default function PromotionsPage() {
 
             {/* Pagination Controls */}
             {!loading && totalItems > 0 && (
-                <div className="flex items-center justify-between p-6 border-t border-slate-100 bg-white rounded-2xl shadow-sm">
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 sm:p-6 border-t border-slate-100 bg-white rounded-2xl shadow-sm">
                     <div className="text-sm text-slate-500 font-medium">
                         แสดง {Math.min((currentPage - 1) * itemsPerPage + 1, totalItems)} - {Math.min(currentPage * itemsPerPage, totalItems)} จาก {totalItems.toLocaleString()} รายการ
                     </div>

@@ -33,7 +33,46 @@ export default function PointsTable({
 
     return (
         <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-            <div className="overflow-x-auto">
+            {/* Mobile Card View */}
+            <div className="md:hidden">
+                {transactions.length > 0 ? (
+                    <div className="divide-y divide-slate-100">
+                        {transactions.map((tx) => {
+                            const typeInfo = getTransactionTypeInfo(tx.transactionType);
+                            return (
+                                <div key={tx.id} className="p-4 space-y-2.5">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex-1 min-w-0">
+                                            <div className="font-medium text-slate-800 text-sm">{tx.Customer?.name || '-'}</div>
+                                            <div className="text-xs text-slate-400 font-mono">{tx.Customer?.phone || '-'}</div>
+                                        </div>
+                                        <span className="font-bold text-red-600 text-lg">-{tx.points}</span>
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold ${typeInfo.color}`}>
+                                            {typeInfo.icon}
+                                            {typeInfo.label}
+                                        </span>
+                                        <span className="text-xs text-slate-400">{formatDateTime(tx.transactionDate)}</span>
+                                    </div>
+                                    {tx.description && (
+                                        <div className="text-xs text-slate-500 bg-slate-50 rounded-lg p-2">{tx.description}</div>
+                                    )}
+                                </div>
+                            );
+                        })}
+                    </div>
+                ) : (
+                    <div className="py-16 text-center text-slate-400">
+                        <Package className="w-16 h-16 mx-auto mb-4 opacity-50" />
+                        <p className="text-lg font-medium">ไม่พบรายการ</p>
+                        <p className="text-sm mt-1">ลองค้นหาด้วยชื่อหรือเบอร์โทรอื่น</p>
+                    </div>
+                )}
+            </div>
+
+            {/* Desktop Table */}
+            <div className="overflow-x-auto hidden md:block">
                 <table className="w-full">
                     <thead className="bg-slate-50 border-b border-slate-100">
                         <tr>
@@ -94,7 +133,7 @@ export default function PointsTable({
 
             {/* Pagination */}
             {totalItems > itemsPerPage && (
-                <div className="flex items-center justify-between p-4 border-t border-slate-100">
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 border-t border-slate-100">
                     <div className="text-sm text-slate-500">
                         แสดง {Math.min((currentPage - 1) * itemsPerPage + 1, totalItems)} - {Math.min(currentPage * itemsPerPage, totalItems)} จาก {totalItems} รายการ
                     </div>
@@ -116,7 +155,7 @@ export default function PointsTable({
                                     )}
                                     <button
                                         onClick={() => setCurrentPage(page)}
-                                        className={`w-10 h-10 rounded-lg font-medium transition-colors ${currentPage === page
+                                        className={`w-9 h-9 sm:w-10 sm:h-10 rounded-lg font-medium transition-colors ${currentPage === page
                                             ? "bg-purple-600 text-white"
                                             : "border border-slate-200 text-slate-600 hover:bg-slate-50"
                                             }`}

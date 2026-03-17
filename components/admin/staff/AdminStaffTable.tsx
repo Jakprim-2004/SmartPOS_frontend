@@ -13,7 +13,53 @@ interface AdminStaffTableProps {
 export default function AdminStaffTable({ staffs, loading, onEdit, onDelete }: AdminStaffTableProps) {
     return (
         <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-            <div className="overflow-x-auto">
+            {/* Mobile Card View */}
+            <div className="md:hidden">
+                {loading ? (
+                    <div className="divide-y divide-slate-100">
+                        {Array(3).fill(0).map((_, i) => (
+                            <div key={i} className="p-4 animate-pulse"><div className="h-16 bg-slate-50 rounded"></div></div>
+                        ))}
+                    </div>
+                ) : staffs.length === 0 ? (
+                    <div className="px-6 py-10 text-center text-slate-400">ไม่พบข้อมูลพนักงาน</div>
+                ) : (
+                    <div className="divide-y divide-slate-100">
+                        {staffs.map((staff) => (
+                            <div key={staff.id} className="p-4 space-y-3">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-bold">
+                                        {staff.name.charAt(0)}
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="font-bold text-slate-700 text-sm">{staff.name}</div>
+                                        <div className="text-xs text-slate-400">@{staff.username}</div>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <button onClick={() => onEdit(staff)} className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all">
+                                            <Edit2 className="w-4 h-4" />
+                                        </button>
+                                        <button onClick={() => onDelete(staff.id)} className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all">
+                                            <Trash2 className="w-4 h-4" />
+                                        </button>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-3 text-xs">
+                                    <span className="px-2.5 py-1 bg-blue-50 text-blue-600 font-bold rounded-full uppercase">
+                                        {staff.role}
+                                    </span>
+                                    <span className="text-slate-400">
+                                        {new Date(staff.created_at).toLocaleDateString('th-TH')}
+                                    </span>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+
+            {/* Desktop Table */}
+            <div className="overflow-x-auto hidden md:block">
                 <table className="w-full text-left">
                     <thead className="bg-slate-50 border-b border-slate-100">
                         <tr>

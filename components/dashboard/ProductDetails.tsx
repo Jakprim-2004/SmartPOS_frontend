@@ -52,7 +52,7 @@ export default function ProductDetails() {
     const totalPages = Math.ceil(total / itemsPerPage);
 
     return (
-        <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 p-6 overflow-hidden">
+        <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 p-4 sm:p-6 overflow-hidden">
             <div className="flex flex-wrap justify-between items-center mb-6 gap-4">
                 <div>
                     <h5 className="text-lg font-bold text-gray-800 flex items-center gap-2">
@@ -79,7 +79,53 @@ export default function ProductDetails() {
                 </div>
             </div>
 
-            <div className="overflow-x-auto rounded-xl border border-gray-100 mb-6">
+            {/* Mobile Card View */}
+            <div className="md:hidden space-y-3 mb-6">
+                {loading ? (
+                    <div className="flex justify-center items-center py-10 text-gray-400 gap-2">
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        <span>กำลังโหลดข้อมูล...</span>
+                    </div>
+                ) : products.length > 0 ? (
+                    products.map((item: ProductStat, index: number) => (
+                        <div key={item.id} className="bg-gray-50 rounded-xl p-4 border border-gray-100 hover:shadow-md transition-all">
+                            <div className="flex justify-between items-start mb-3">
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <span className="bg-indigo-100 text-indigo-600 text-xs font-bold w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0">
+                                            {(currentPage - 1) * itemsPerPage + index + 1}
+                                        </span>
+                                        <h6 className="font-bold text-gray-800 text-sm truncate">{item.name}</h6>
+                                    </div>
+                                    <p className="text-xs text-gray-400 ml-8">{item.barcode}</p>
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-3 gap-2 bg-white rounded-lg p-3">
+                                <div className="text-center">
+                                    <p className="text-xs text-gray-400 mb-0.5">จำนวน</p>
+                                    <p className="font-bold text-gray-800">{item.soldQty} <span className="text-xs font-normal text-gray-400">ชิ้น</span></p>
+                                </div>
+                                <div className="text-center border-x border-gray-100">
+                                    <p className="text-xs text-gray-400 mb-0.5">ยอดขาย</p>
+                                    <p className="font-bold text-indigo-600 text-sm">{item.totalAmount.toLocaleString()}</p>
+                                </div>
+                                <div className="text-center">
+                                    <p className="text-xs text-gray-400 mb-0.5">กำไร</p>
+                                    <p className="font-bold text-green-600 text-sm">{item.netProfit.toLocaleString()}</p>
+                                </div>
+                            </div>
+                        </div>
+                    ))
+                ) : (
+                    <div className="text-center py-10 text-gray-400">
+                        <Package className="w-12 h-12 mx-auto mb-3 opacity-20" />
+                        <p>ไม่พบข้อมูลสินค้าในช่วงเวลาที่เลือก</p>
+                    </div>
+                )}
+            </div>
+
+            {/* Desktop Table View */}
+            <div className="overflow-x-auto rounded-xl border border-gray-100 mb-6 hidden md:block">
                 <table className="w-full text-sm text-left text-gray-500">
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50">
                         <tr>
@@ -140,7 +186,7 @@ export default function ProductDetails() {
                                 <button
                                     onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                                     disabled={currentPage === 1}
-                                    className="w-9 h-9 flex items-center justify-center rounded-xl border border-gray-200 bg-white hover:border-orange-300 hover:bg-orange-50 disabled:opacity-30 disabled:hover:bg-white disabled:hover:border-gray-200 transition-all duration-200 group active:scale-95 shadow-sm"
+                                    className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-xl border border-gray-200 bg-white hover:border-orange-300 hover:bg-orange-50 disabled:opacity-30 disabled:hover:bg-white disabled:hover:border-gray-200 transition-all duration-200 group active:scale-95 shadow-sm"
                                 >
                                     <ChevronLeft className="w-4 h-4 text-gray-500 group-hover:text-orange-600" />
                                 </button>
@@ -155,7 +201,7 @@ export default function ProductDetails() {
                                                 )}
                                                 <button
                                                     onClick={() => setCurrentPage(page)}
-                                                    className={`w-9 h-9 rounded-xl font-bold transition-all duration-300 ${currentPage === page
+                                                    className={`w-8 h-8 sm:w-9 sm:h-9 rounded-xl font-bold transition-all duration-300 ${currentPage === page
                                                         ? "bg-orange-500 text-white shadow-lg shadow-orange-200 ring-2 ring-orange-100 ring-offset-1 scale-110"
                                                         : "bg-white border border-gray-200 text-gray-600 hover:border-orange-200 hover:text-orange-600 hover:bg-orange-50 active:scale-95 shadow-sm"
                                                         }`}
@@ -169,7 +215,7 @@ export default function ProductDetails() {
                                 <button
                                     onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                                     disabled={currentPage === totalPages}
-                                    className="w-9 h-9 flex items-center justify-center rounded-xl border border-gray-200 bg-white hover:border-orange-300 hover:bg-orange-50 disabled:opacity-30 disabled:hover:bg-white disabled:hover:border-gray-200 transition-all duration-200 group active:scale-95 shadow-sm"
+                                    className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-xl border border-gray-200 bg-white hover:border-orange-300 hover:bg-orange-50 disabled:opacity-30 disabled:hover:bg-white disabled:hover:border-gray-200 transition-all duration-200 group active:scale-95 shadow-sm"
                                 >
                                     <ChevronRight className="w-4 h-4 text-gray-500 group-hover:text-orange-600" />
                                 </button>

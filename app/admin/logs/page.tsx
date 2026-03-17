@@ -99,21 +99,21 @@ export default function AdminLogsPage() {
     const totalPages = Math.ceil(total / limit);
 
     return (
-        <div className="p-6 space-y-6">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
                 <div className="flex items-center gap-3">
-                    <div className="p-3 bg-blue-100 rounded-xl">
-                        <History className="w-6 h-6 text-blue-600" />
+                    <div className="p-2.5 sm:p-3 bg-blue-100 rounded-xl">
+                        <History className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
                     </div>
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-800">ประวัติการทำงานพนักงาน</h1>
-                        <p className="text-gray-500">ตรวจสอบความเคลื่อนไหวทั้งหมดในระบบ</p>
+                        <h1 className="text-xl sm:text-2xl font-bold text-gray-800">ประวัติการทำงานพนักงาน</h1>
+                        <p className="text-sm text-gray-500">ตรวจสอบความเคลื่อนไหวทั้งหมดในระบบ</p>
                     </div>
                 </div>
             </div>
 
             {/* Filters */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 bg-white p-3 sm:p-4 rounded-xl border border-gray-100 shadow-sm">
                 <div className="relative">
                     <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                     <select
@@ -144,8 +144,63 @@ export default function AdminLogsPage() {
                 </div>
             </div>
 
-            {/* Logs Table */}
-            <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+            {/* Mobile Card View */}
+            <div className="md:hidden space-y-3">
+                {loading ? (
+                    Array.from({ length: 5 }).map((_, i) => (
+                        <div key={i} className="bg-white rounded-xl p-4 border border-gray-100 animate-pulse">
+                            <div className="h-16 bg-gray-100 rounded"></div>
+                        </div>
+                    ))
+                ) : logs.length === 0 ? (
+                    <div className="bg-white rounded-xl p-8 text-center text-gray-400 italic border border-gray-100">
+                        ไม่พบข้อมูลประวัติการทำงาน
+                    </div>
+                ) : (
+                    logs.map((log) => (
+                        <div key={log.id} className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm space-y-3">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                    <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-xs">
+                                        {log.Staff?.name?.charAt(0) || 'S'}
+                                    </div>
+                                    <div>
+                                        <div className="font-bold text-gray-800 text-sm">{log.Staff?.name || 'Unknown'}</div>
+                                        <div className="text-gray-400 text-xs">@{log.Staff?.username}</div>
+                                    </div>
+                                </div>
+                                <div className="text-xs text-gray-400">
+                                    {format(new Date(log.created_at), 'dd MMM yy, HH:mm', { locale: th })}
+                                </div>
+                            </div>
+                            <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold w-fit border ${log.action.includes('CREATE') ? 'bg-green-50 text-green-700 border-green-100' :
+                                log.action.includes('UPDATE') ? 'bg-blue-50 text-blue-700 border-blue-100' :
+                                    log.action.includes('DELETE') ? 'bg-red-50 text-red-700 border-red-100' :
+                                        log.action.includes('SALE') ? 'bg-purple-50 text-purple-700 border-purple-100' :
+                                            log.action.includes('REDEEM') ? 'bg-orange-50 text-orange-700 border-orange-100' :
+                                                log.action.includes('STOCK') ? 'bg-indigo-50 text-indigo-700 border-indigo-100' :
+                                                    'bg-gray-50 text-gray-700 border-gray-100'
+                                }`}>
+                                {getActionIcon(log.action)}
+                                {getActionLabel(log.action)}
+                            </div>
+                            <div className="text-sm text-gray-600 bg-gray-50 rounded-lg p-2.5">
+                                {log.action === 'CREATE_SALE' && `บิลเลขที่ #${log.details.billNumber} ยอดรวม ${log.details.total}฿`}
+                                {log.action === 'ADD_STOCK' && `เพิ่ม ${log.details.addedQty} ชิ้น ให้กับ ${log.details.productName}`}
+                                {log.action === 'CREATE_PRODUCT' && `เพิ่มสินค้า: ${log.details.productName}`}
+                                {log.action === 'UPDATE_PRODUCT' && `แก้ไขสินค้า ID: ${log.details.productId}`}
+                                {log.action === 'DELETE_PRODUCT' && `ลบสินค้า: ${log.details.productName}`}
+                                {log.action === 'REDEEM_REWARD' && `แลกของรางวัล: ${log.details.rewardTitle}`}
+                                {log.action.includes('CATEGORY') && `${getActionLabel(log.action)}: ${log.details.categoryName || log.details.categoryId}`}
+                                {!['CREATE_SALE', 'ADD_STOCK', 'CREATE_PRODUCT', 'UPDATE_PRODUCT', 'DELETE_PRODUCT', 'REDEEM_REWARD'].includes(log.action) && !log.action.includes('CATEGORY') && JSON.stringify(log.details)}
+                            </div>
+                        </div>
+                    ))
+                )}
+            </div>
+
+            {/* Desktop Table */}
+            <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden hidden md:block">
                 <div className="overflow-x-auto">
                     <table className="w-full">
                         <thead className="bg-gray-50 border-b border-gray-100">
@@ -218,7 +273,7 @@ export default function AdminLogsPage() {
 
                 {/* Pagination */}
                 {totalPages > 1 && (
-                    <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
+                    <div className="px-4 sm:px-6 py-4 bg-gray-50 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-3">
                         <div className="text-sm text-gray-500">
                             แสดง {((page - 1) * limit) + 1} - {Math.min(page * limit, total)} จากทั้งหมด {total} รายการ
                         </div>
@@ -242,6 +297,32 @@ export default function AdminLogsPage() {
                     </div>
                 )}
             </div>
+
+            {/* Mobile Pagination */}
+            {totalPages > 1 && (
+                <div className="md:hidden flex items-center justify-between bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
+                    <div className="text-xs text-gray-500">
+                        {((page - 1) * limit) + 1}-{Math.min(page * limit, total)} / {total}
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={() => setPage(p => Math.max(1, p - 1))}
+                            disabled={page === 1}
+                            className="p-2 rounded-lg border border-gray-200 bg-white disabled:opacity-50 hover:bg-gray-50"
+                        >
+                            <ChevronLeft className="w-4 h-4" />
+                        </button>
+                        <span className="text-sm font-medium">{page}/{totalPages}</span>
+                        <button
+                            onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                            disabled={page === totalPages}
+                            className="p-2 rounded-lg border border-gray-200 bg-white disabled:opacity-50 hover:bg-gray-50"
+                        >
+                            <ChevronRight className="w-4 h-4" />
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

@@ -44,13 +44,13 @@ export default function StatsGrid({ todaySales, dailyViewMode }: StatsGridProps)
             {cards.map((card, index) => (
                 <div
                     key={index}
-                    className={`rounded-2xl p-6 text-white text-center shadow-lg transform transition-transform hover:-translate-y-1 bg-gradient-to-br ${card.gradient}`}
+                    className={`rounded-2xl p-4 sm:p-6 text-white text-center shadow-lg transform transition-transform hover:-translate-y-1 bg-gradient-to-br ${card.gradient}`}
                 >
-                    <div className="w-20 h-20 mx-auto bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mb-4 shadow-inner">
+                    <div className="w-14 h-14 sm:w-20 sm:h-20 mx-auto bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mb-3 sm:mb-4 shadow-inner">
                         {card.icon}
                     </div>
                     <h3 className="text-lg font-medium opacity-90 mb-1">{card.title}</h3>
-                    <div className="text-3xl font-bold mb-1 shadow-black/10 drop-shadow-sm">
+                    <div className="text-2xl sm:text-3xl font-bold mb-1 shadow-black/10 drop-shadow-sm">
                         {typeof card.value === 'number' ? card.value.toLocaleString() : card.value}
                         {card.unit ? <span className="text-lg ml-2 font-normal">{card.unit}</span> : <span className="text-lg ml-2 font-normal">บาท</span>}
                     </div>

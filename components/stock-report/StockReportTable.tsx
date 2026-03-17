@@ -38,7 +38,64 @@ export default function StockReportTable({
 
     return (
         <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-            <div className="overflow-x-auto">
+            {/* Mobile Card View */}
+            <div className="md:hidden">
+                {stocks.length > 0 ? (
+                    <div className="divide-y divide-slate-100">
+                        {stocks.map((stock, index) => {
+                            const status = getStockStatus(stock.remaining);
+                            return (
+                                <div key={stock.id} className={`p-4 space-y-3 ${status.rowColor}`}>
+                                    <div className="flex items-start justify-between">
+                                        <div className="flex-1 min-w-0">
+                                            <div className="font-semibold text-slate-800 text-sm">{stock.name}</div>
+                                            <div className="flex items-center gap-2 mt-1">
+                                                <span className="text-xs text-slate-400">
+                                                    {typeof stock.category === 'object' ? (stock.category as any).name : stock.category}
+                                                </span>
+                                                {stock.remaining === 0 && (
+                                                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-red-500 text-white">หมดสต๊อก</span>
+                                                )}
+                                                {stock.remaining > 0 && stock.remaining <= 10 && (
+                                                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500 text-white">เหลือน้อย</span>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <span className={`inline-flex items-center px-2.5 py-1 rounded-lg font-bold text-sm ${getRemainingBadgeColor(stock.remaining)}`}>
+                                            {stock.remaining.toLocaleString()}
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                        <button
+                                            onClick={() => onViewStockIn(stock)}
+                                            className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 text-green-600 bg-green-50 hover:bg-green-100 rounded-lg font-semibold text-sm transition-colors"
+                                        >
+                                            <TrendingUp className="w-4 h-4" />
+                                            รับเข้า {stock.stockIn.toLocaleString()}
+                                        </button>
+                                        <button
+                                            onClick={() => onViewStockOut(stock)}
+                                            className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 text-red-600 bg-red-50 hover:bg-red-100 rounded-lg font-semibold text-sm transition-colors"
+                                        >
+                                            <TrendingDown className="w-4 h-4" />
+                                            ขายออก {stock.stockOut.toLocaleString()}
+                                        </button>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                ) : (
+                    <div className="py-16 text-center text-slate-400">
+                        <Package className="w-16 h-16 mx-auto mb-4 opacity-50" />
+                        <p className="text-lg font-medium">ไม่พบข้อมูล</p>
+                        <p className="text-sm mt-1">ลองค้นหาด้วยคำอื่น</p>
+                    </div>
+                )}
+            </div>
+
+            {/* Desktop Table */}
+            <div className="overflow-x-auto hidden md:block">
                 <table className="w-full">
                     <thead className="bg-slate-50 border-b border-slate-100">
                         <tr>
@@ -123,7 +180,7 @@ export default function StockReportTable({
 
             {/* Pagination */}
             {totalStocks > itemsPerPage && (
-                <div className="flex items-center justify-between p-4 border-t border-slate-100">
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 border-t border-slate-100">
                     <div className="text-sm text-slate-500 font-medium">
                         แสดง {Math.min((currentPage - 1) * itemsPerPage + 1, totalStocks)} - {Math.min(currentPage * itemsPerPage, totalStocks)} จาก {totalStocks} รายการ
                     </div>
@@ -145,7 +202,7 @@ export default function StockReportTable({
                                     )}
                                     <button
                                         onClick={() => setCurrentPage(page)}
-                                        className={`w-10 h-10 rounded-xl font-bold transition-all ${currentPage === page
+                                        className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl font-bold transition-all ${currentPage === page
                                             ? "bg-gradient-to-br from-indigo-500 to-indigo-600 text-white shadow-lg shadow-indigo-200"
                                             : "border border-slate-200 bg-white text-slate-600 hover:border-indigo-200 hover:bg-indigo-50"
                                             }`}

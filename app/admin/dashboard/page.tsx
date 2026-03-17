@@ -168,7 +168,7 @@ export default function AdminDashboardPage() {
     ];
 
     return (
-        <div className="space-y-6 animate-in fade-in duration-500">
+        <div className="space-y-4 sm:space-y-6 animate-in fade-in duration-500">
             <DashboardHeader
                 dailyViewMode={dailyViewMode}
                 setDailyViewMode={setDailyViewMode}
@@ -182,10 +182,10 @@ export default function AdminDashboardPage() {
             {/* Admin Overview Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {adminStatItems.map((stat, i) => (
-                    <div key={i} className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-start justify-between hover:shadow-md transition-all hover:-translate-y-1">
+                    <div key={i} className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-100 shadow-sm flex items-start justify-between hover:shadow-md transition-all hover:-translate-y-1">
                         <div>
                             <div className="text-slate-500 text-sm font-medium mb-1">{stat.label}</div>
-                            <div className="text-2xl font-bold text-slate-800 mb-1">{stat.value}</div>
+                            <div className="text-xl sm:text-2xl font-bold text-slate-800 mb-1">{stat.value}</div>
                             <div className="text-xs text-slate-400 font-medium">{stat.sub}</div>
                         </div>
                         <div className={`p-3 rounded-xl text-white shadow-lg ${stat.color}`}>

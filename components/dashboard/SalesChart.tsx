@@ -91,7 +91,7 @@ export default function SalesChart({
     const arrYear = Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - 4 + i).reverse();
 
     return (
-        <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 p-6">
+        <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 p-4 sm:p-6">
             <div className="flex flex-wrap justify-between items-center mb-6 gap-4">
                 <div>
                     <h5 className="text-lg font-bold text-gray-800 flex items-center gap-2">
@@ -101,7 +101,7 @@ export default function SalesChart({
                     <p className="text-sm text-gray-500">วิเคราะห์แนวโน้มการขาย</p>
                 </div>
 
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                     <select
                         value={viewType}
                         onChange={(e) => setViewType(e.target.value)}
@@ -133,7 +133,7 @@ export default function SalesChart({
                 </div>
             </div>
 
-            <div className="h-[400px] w-full">
+            <div className="h-[250px] sm:h-[350px] md:h-[400px] w-full">
                 <Line data={chartData} options={options} />
             </div>
         </div>
