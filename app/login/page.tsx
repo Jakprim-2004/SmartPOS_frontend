@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import Link from "next/link";
 import toast from "react-hot-toast";
 import { User, Lock, ArrowRight, Loader2 } from "lucide-react";
 import { login } from "@/lib/api/auth";
@@ -15,9 +14,31 @@ export default function AdminLoginPage() {
         password: ""
     });
     const [loading, setLoading] = useState(false);
+    const [demoLoading, setDemoLoading] = useState(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const performLogin = async (username: string, password: string) => {
+        const data = await login(username, password);
+
+        // Store token & user info
+        if (data.access_token) {
+            localStorage.setItem('access_token', data.access_token);
+            // Also set a cookie so the middleware can see it
+            document.cookie = `access_token=${data.access_token}; path=/; max-age=${7 * 24 * 60 * 60}; samesite=lax`;
+        }
+        localStorage.setItem('user', JSON.stringify(data.user));
+
+        toast.success(`Welcome back, ${data.user.username}!`);
+
+        // Redirect based on user role
+        if (data.user.role === 'admin') {
+            router.push('/admin/dashboard');
+        } else {
+            router.push('/sale');
+        }
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -25,29 +46,26 @@ export default function AdminLoginPage() {
         setLoading(true);
 
         try {
-            const data = await login(formData.username, formData.password);
-
-            // Store token & user info
-            if (data.access_token) {
-                localStorage.setItem('access_token', data.access_token);
-                // Also set a cookie so the middleware can see it
-                document.cookie = `access_token=${data.access_token}; path=/; max-age=${7 * 24 * 60 * 60}; samesite=lax`;
-            }
-            localStorage.setItem('user', JSON.stringify(data.user));
-
-            toast.success(`Welcome back, ${data.user.username}!`);
-
-            // Redirect based on user role
-            if (data.user.role === 'admin') {
-                router.push('/admin/dashboard');
-            } else {
-                router.push('/sale');
-            }
+            await performLogin(formData.username, formData.password);
         } catch (error) {
             console.error(error);
             toast.error("เข้าสู่ระบบล้มเหลว ตรวจสอบชื่อผู้ใช้และรหัสผ่าน");
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleDemoLogin = async () => {
+        setDemoLoading(true);
+        setFormData({ username: "smartpos", password: "123456789" });
+
+        try {
+            await performLogin("smartpos", "123456789");
+        } catch (error) {
+            console.error(error);
+            toast.error("Demo login ล้มเหลว กรุณาลองใหม่อีกครั้ง");
+        } finally {
+            setDemoLoading(false);
         }
     };
 
@@ -102,7 +120,7 @@ export default function AdminLoginPage() {
 
                         <button
                             type="submit"
-                            disabled={loading}
+                            disabled={loading || demoLoading}
                             className={`w-full py-3.5 rounded-xl font-bold text-white shadow-lg shadow-indigo-200 flex items-center justify-center gap-2 mt-4 transition-all ${loading
                                 ? 'bg-indigo-400 cursor-not-allowed'
                                 : 'bg-indigo-600 hover:bg-indigo-700 active:scale-95'
@@ -112,11 +130,18 @@ export default function AdminLoginPage() {
                         </button>
                     </form>
 
-                    <div className="mt-6 text-center text-sm">
-                        <span className="text-slate-500">ยังไม่มีบัญชีร้านค้า? </span> <br />
-                        <Link href="" className="text-indigo-600 font-bold hover:underline">
-                            ลงชื่อเข้าใช้ด้วย username smartpos และ password 123456789
-                        </Link>
+                    <div className="mt-4">
+                        <button
+                            type="button"
+                            onClick={handleDemoLogin}
+                            disabled={demoLoading || loading}
+                            className={`w-full py-3 rounded-xl font-bold border-2 border-indigo-200 flex items-center justify-center gap-2 transition-all ${demoLoading
+                                ? 'bg-indigo-50 text-indigo-400 cursor-not-allowed'
+                                : 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100 hover:border-indigo-300 active:scale-95'
+                                }`}
+                        >
+                            {demoLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <>🚀 Demo Login</>}
+                        </button>
                     </div>
 
                     <div className="mt-8 text-center">
